@@ -3,38 +3,553 @@
 <head>
   <meta charset="utf-8">
   <title>Genotype QC and Harmonization Readiness Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; color: #222; line-height: 1.6; }
-    header { border-bottom: 2px solid #222; margin-bottom: 24px; }
-    h1 { margin-bottom: 4px; }
-    h2 { border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 28px; }
-    table { border-collapse: collapse; width: 100%; margin: 12px 0 24px 0; }
-    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
-    th { background: #f2f2f2; text-align: left; }
-    .warning { background: #fff3cd; padding: 12px; border: 1px solid #ffeeba; }
-    .small { color: #555; font-size: 0.95em; }
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --ink: #14213d;
+      --muted: #5c677d;
+      --line: #d9e2ec;
+      --navy: #0b2545;
+      --blue: #1d4ed8;
+      --green: #166534;
+      --amber: #92400e;
+      --red: #991b1b;
+      --gray: #374151;
+      --green-bg: #dcfce7;
+      --amber-bg: #fef3c7;
+      --red-bg: #fee2e2;
+      --gray-bg: #f3f4f6;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #081f3a 0%, #123c69 55%, #1e6091 100%);
+      color: white;
+      padding: 44px 56px;
+    }
+
+    .hero-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      color: #c7d2fe;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.35rem;
+      line-height: 1.15;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      margin: 16px 0 0;
+      color: #e0f2fe;
+      font-size: 1.04rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .meta-item {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.9rem;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: -24px auto 48px;
+      padding: 0 20px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .metric-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.35rem;
+      color: var(--navy);
+    }
+
+    h3 {
+      margin: 18px 0 10px;
+      color: var(--navy);
+      font-size: 1.05rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .pass {
+      color: var(--green);
+      background: var(--green-bg);
+    }
+
+    .warn {
+      color: var(--amber);
+      background: var(--amber-bg);
+    }
+
+    .fail {
+      color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .skip {
+      color: var(--gray);
+      background: var(--gray-bg);
+    }
+
+    .technical {
+      color: #1e3a8a;
+      background: #dbeafe;
+    }
+
+    .status-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 80px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar {
+      height: 11px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill-pass {
+      height: 100%;
+      width: 50%;
+      background: #22c55e;
+    }
+
+    .bar-fill-warn {
+      height: 100%;
+      width: 41.67%;
+      background: #f59e0b;
+    }
+
+    .bar-fill-fail {
+      height: 100%;
+      width: 8.33%;
+      background: #ef4444;
+    }
+
+    .bar-fill-skip {
+      height: 100%;
+      width: 0%;
+      background: #6b7280;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .callout {
+      border-left: 5px solid #f59e0b;
+      background: #fffbeb;
+      padding: 14px 16px;
+      border-radius: 12px;
+      color: #78350f;
+      margin-top: 12px;
+    }
+
+    .note {
+      border-left: 5px solid #2563eb;
+      background: #eff6ff;
+      padding: 14px 16px;
+      border-radius: 12px;
+      color: #1e3a8a;
+      margin-top: 12px;
+    }
+
+    .footer {
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+      padding: 14px 0 0;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid, .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 34px 24px;
+      }
+
+      h1 {
+        font-size: 1.85rem;
+      }
+    }
   </style>
 </head>
 <body>
-<header>
-  <h1>Genotype QC and Harmonization Readiness Report</h1>
-  <p><strong>Created by:</strong> Mahdi Akbarzadeh</p>
-  <p class="small">Synthetic demonstration only. Not intended for clinical or consumer-facing genetic interpretation.</p>
-</header>
-<section>
-  <h2>QC Summary</h2>
-  <table><thead><tr><th>metric</th><th>value</th><th>status</th><th>interpretation</th></tr></thead><tbody><tr><td>created_by</td><td>Mahdi Akbarzadeh</td><td>PASS</td><td>Creator attribution recorded.</td></tr><tr><td>declared_genome_build</td><td>GRCh37</td><td>PASS</td><td>Genome build declaration used for reference compatibility checks.</td></tr><tr><td>variant_count</td><td>12</td><td>PASS</td><td>Total number of synthetic variant rows processed.</td></tr><tr><td>call_rate</td><td>0.9167</td><td>WARN</td><td>Synthetic sample-level call rate estimate.</td></tr><tr><td>invalid_genotype_count</td><td>1</td><td>FAIL</td><td>Invalid genotype encodings should be reviewed.</td></tr><tr><td>duplicate_marker_rows</td><td>2</td><td>WARN</td><td>Duplicate marker rows were flagged.</td></tr><tr><td>non_autosomal_rows</td><td>1</td><td>WARN</td><td>Non-autosomal markers are flagged in this autosomal-focused demonstration.</td></tr><tr><td>invalid_position_rows</td><td>1</td><td>FAIL</td><td>Positions must be positive integers.</td></tr><tr><td>harmonization_pass_rate</td><td>0.5000</td><td>WARN</td><td>Proportion of rows compatible with the synthetic reference alleles.</td></tr></tbody></table>
-</section>
-<section>
-  <h2>Harmonization Status Summary</h2>
-  <table><thead><tr><th>status_label</th><th>count</th><th>proportion</th><th>interpretation</th></tr></thead><tbody><tr><td>PASS</td><td>6</td><td>0.5000</td><td>Compatible with the synthetic reference table.</td></tr><tr><td>WARN</td><td>5</td><td>0.4167</td><td>Reportable only with caution or additional review.</td></tr><tr><td>FAIL</td><td>0</td><td>0.0000</td><td>Not harmonization-ready.</td></tr><tr><td>SKIP</td><td>1</td><td>0.0833</td><td>Skipped because genotype was missing or not applicable.</td></tr></tbody></table>
-</section>
-<section class="warning">
-  <h2>Limitations</h2>
-  <p>This report uses synthetic data only. Real genotype harmonization requires verified genome build, platform-specific marker metadata, allele-frequency-aware strand resolution, and strict audit logging.</p>
-</section>
-<footer>
-  <p class="small">Created by: Mahdi Akbarzadeh</p>
-</footer>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Synthetic genomic reporting demonstration</div>
+      <h1>Genotype QC and Harmonization Readiness Report</h1>
+      <p class="subtitle">
+        A technical demonstration report for genotype input validation, quality control,
+        allele/reference compatibility checks, and downstream report-readiness assessment.
+      </p>
+      <div class="meta">
+        <div class="meta-item"><strong>Created by:</strong> Mahdi Akbarzadeh</div>
+        <div class="meta-item"><strong>Input type:</strong> Synthetic genotype table</div>
+        <div class="meta-item"><strong>Declared build:</strong> GRCh37</div>
+        <div class="meta-item"><strong>Use:</strong> Technical demonstration only</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="summary-grid">
+      <div class="card">
+        <div class="metric-label">Variant rows</div>
+        <div class="metric-value">12</div>
+        <div class="metric-note">Synthetic records processed</div>
+      </div>
+      <div class="card">
+        <div class="metric-label">Call rate</div>
+        <div class="metric-value">91.67%</div>
+        <div class="metric-note"><span class="badge warn">WARN</span></div>
+      </div>
+      <div class="card">
+        <div class="metric-label">Harmonization pass rate</div>
+        <div class="metric-value">50.00%</div>
+        <div class="metric-note"><span class="badge warn">WARN</span></div>
+      </div>
+      <div class="card">
+        <div class="metric-label">Overall readiness</div>
+        <div class="metric-value">Review</div>
+        <div class="metric-note"><span class="badge technical">TECHNICAL ONLY</span></div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div>
+        <section class="section">
+          <h2>Executive Technical Summary</h2>
+          <p>
+            This synthetic example demonstrates how a genomic reporting system can audit genotype-level
+            data before downstream PRS, pharmacogenomics, ancestry, or clinical-facing modules are rendered.
+          </p>
+          <div class="callout">
+            <strong>Interpretation:</strong> The demonstration input contains intentionally inserted QC issues:
+            low call rate, duplicate marker rows, one invalid genotype encoding, one non-autosomal row,
+            and one invalid position. This is expected and is useful for showing report-readiness logic.
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>QC Summary</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
+                <th>Status</th>
+                <th>Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">created_by</td>
+                <td>Mahdi Akbarzadeh</td>
+                <td><span class="badge pass">PASS</span></td>
+                <td>Creator attribution recorded.</td>
+              </tr>
+              <tr>
+                <td class="mono">declared_genome_build</td>
+                <td>GRCh37</td>
+                <td><span class="badge pass">PASS</span></td>
+                <td>Genome build declaration used for reference compatibility checks.</td>
+              </tr>
+              <tr>
+                <td class="mono">variant_count</td>
+                <td>12</td>
+                <td><span class="badge pass">PASS</span></td>
+                <td>Total number of synthetic variant rows processed.</td>
+              </tr>
+              <tr>
+                <td class="mono">call_rate</td>
+                <td>0.9167</td>
+                <td><span class="badge warn">WARN</span></td>
+                <td>Synthetic sample-level call rate estimate.</td>
+              </tr>
+              <tr>
+                <td class="mono">invalid_genotype_count</td>
+                <td>1</td>
+                <td><span class="badge fail">FAIL</span></td>
+                <td>Invalid genotype encodings should be reviewed.</td>
+              </tr>
+              <tr>
+                <td class="mono">duplicate_marker_rows</td>
+                <td>2</td>
+                <td><span class="badge warn">WARN</span></td>
+                <td>Duplicate marker rows were flagged.</td>
+              </tr>
+              <tr>
+                <td class="mono">non_autosomal_rows</td>
+                <td>1</td>
+                <td><span class="badge warn">WARN</span></td>
+                <td>Non-autosomal markers are flagged in this autosomal-focused demonstration.</td>
+              </tr>
+              <tr>
+                <td class="mono">invalid_position_rows</td>
+                <td>1</td>
+                <td><span class="badge fail">FAIL</span></td>
+                <td>Positions must be positive integers.</td>
+              </tr>
+              <tr>
+                <td class="mono">harmonization_pass_rate</td>
+                <td>0.5000</td>
+                <td><span class="badge warn">WARN</span></td>
+                <td>Proportion of rows compatible with the synthetic reference alleles.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
+      <aside>
+        <section class="section">
+          <h2>Harmonization Status</h2>
+          <div class="status-stack">
+            <div class="status-row">
+              <span class="badge pass">PASS</span>
+              <div class="bar"><div class="bar-fill-pass"></div></div>
+              <strong>6</strong>
+            </div>
+            <div class="status-row">
+              <span class="badge warn">WARN</span>
+              <div class="bar"><div class="bar-fill-warn"></div></div>
+              <strong>5</strong>
+            </div>
+            <div class="status-row">
+              <span class="badge fail">FAIL</span>
+              <div class="bar"><div class="bar-fill-fail"></div></div>
+              <strong>1</strong>
+            </div>
+            <div class="status-row">
+              <span class="badge skip">SKIP</span>
+              <div class="bar"><div class="bar-fill-skip"></div></div>
+              <strong>0</strong>
+            </div>
+          </div>
+
+          <h3>Readiness interpretation</h3>
+          <p>
+            The input is suitable for technical demonstration, but not for production or clinical reporting.
+            Failed and warning-level records should be resolved before downstream analysis.
+          </p>
+        </section>
+
+        <section class="section">
+          <h2>Report Controls</h2>
+          <table>
+            <tbody>
+              <tr>
+                <th>Clinical use</th>
+                <td><span class="badge fail">Not allowed</span></td>
+              </tr>
+              <tr>
+                <th>Customer-facing use</th>
+                <td><span class="badge fail">Not allowed</span></td>
+              </tr>
+              <tr>
+                <th>Technical demo</th>
+                <td><span class="badge pass">Allowed</span></td>
+              </tr>
+              <tr>
+                <th>Data type</th>
+                <td>Synthetic only</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </aside>
+    </section>
+
+    <section class="section">
+      <h2>Harmonization Status Summary</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Status label</th>
+            <th>Count</th>
+            <th>Proportion</th>
+            <th>Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge pass">PASS</span></td>
+            <td>6</td>
+            <td>0.5000</td>
+            <td>Compatible with the synthetic reference table.</td>
+          </tr>
+          <tr>
+            <td><span class="badge warn">WARN</span></td>
+            <td>5</td>
+            <td>0.4167</td>
+            <td>Reportable only with caution or additional review.</td>
+          </tr>
+          <tr>
+            <td><span class="badge fail">FAIL</span></td>
+            <td>1</td>
+            <td>0.0833</td>
+            <td>Not harmonization-ready.</td>
+          </tr>
+          <tr>
+            <td><span class="badge skip">SKIP</span></td>
+            <td>0</td>
+            <td>0.0000</td>
+            <td>Skipped because genotype was missing or not applicable.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <strong>Design note:</strong> In a production pipeline, this report should be generated from validated TSV/JSON
+        outputs rather than manually edited HTML. This demonstration shows the target presentation layer.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Limitations</h2>
+      <ul>
+        <li>This report uses synthetic demonstration data only.</li>
+        <li>It does not provide medical, clinical, pharmacogenomic, ancestry, or consumer genetic interpretation.</li>
+        <li>Real genotype harmonization requires verified genome build, platform-specific marker metadata, allele-frequency-aware strand resolution, and audit logging.</li>
+        <li>Downstream PRS, PGx, and ancestry modules should not be rendered unless QC and harmonization readiness are explicitly documented.</li>
+      </ul>
+    </section>
+
+    <div class="footer">
+      Created by: Mahdi Akbarzadeh · Genotype QC and Harmonization Utilities · Synthetic demonstration report
+    </div>
+  </main>
 </body>
 </html>
