@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Genotype QC and Harmonization Readiness Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; color: #222; line-height: 1.6; }
+    header { border-bottom: 2px solid #222; margin-bottom: 24px; }
+    h1 { margin-bottom: 4px; }
+    h2 { border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 28px; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0 24px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { background: #f2f2f2; text-align: left; }
+    .warning { background: #fff3cd; padding: 12px; border: 1px solid #ffeeba; }
+    .small { color: #555; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Genotype QC and Harmonization Readiness Report</h1>
+  <p><strong>Created by:</strong> Mahdi Akbarzadeh</p>
+  <p class="small">Synthetic demonstration only. Not intended for clinical or consumer-facing genetic interpretation.</p>
+</header>
+<section>
+  <h2>QC Summary</h2>
+  <table><thead><tr><th>metric</th><th>value</th><th>status</th><th>interpretation</th></tr></thead><tbody><tr><td>created_by</td><td>Mahdi Akbarzadeh</td><td>PASS</td><td>Creator attribution recorded.</td></tr><tr><td>declared_genome_build</td><td>GRCh37</td><td>PASS</td><td>Genome build declaration used for reference compatibility checks.</td></tr><tr><td>variant_count</td><td>12</td><td>PASS</td><td>Total number of synthetic variant rows processed.</td></tr><tr><td>call_rate</td><td>0.9167</td><td>WARN</td><td>Synthetic sample-level call rate estimate.</td></tr><tr><td>invalid_genotype_count</td><td>1</td><td>FAIL</td><td>Invalid genotype encodings should be reviewed.</td></tr><tr><td>duplicate_marker_rows</td><td>2</td><td>WARN</td><td>Duplicate marker rows were flagged.</td></tr><tr><td>non_autosomal_rows</td><td>1</td><td>WARN</td><td>Non-autosomal markers are flagged in this autosomal-focused demonstration.</td></tr><tr><td>invalid_position_rows</td><td>1</td><td>FAIL</td><td>Positions must be positive integers.</td></tr><tr><td>harmonization_pass_rate</td><td>0.5000</td><td>WARN</td><td>Proportion of rows compatible with the synthetic reference alleles.</td></tr></tbody></table>
+</section>
+<section>
+  <h2>Harmonization Status Summary</h2>
+  <table><thead><tr><th>status_label</th><th>count</th><th>proportion</th><th>interpretation</th></tr></thead><tbody><tr><td>PASS</td><td>6</td><td>0.5000</td><td>Compatible with the synthetic reference table.</td></tr><tr><td>WARN</td><td>5</td><td>0.4167</td><td>Reportable only with caution or additional review.</td></tr><tr><td>FAIL</td><td>0</td><td>0.0000</td><td>Not harmonization-ready.</td></tr><tr><td>SKIP</td><td>1</td><td>0.0833</td><td>Skipped because genotype was missing or not applicable.</td></tr></tbody></table>
+</section>
+<section class="warning">
+  <h2>Limitations</h2>
+  <p>This report uses synthetic data only. Real genotype harmonization requires verified genome build, platform-specific marker metadata, allele-frequency-aware strand resolution, and strict audit logging.</p>
+</section>
+<footer>
+  <p class="small">Created by: Mahdi Akbarzadeh</p>
+</footer>
+</body>
+</html>

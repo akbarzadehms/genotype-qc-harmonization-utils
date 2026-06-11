@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use or adapt this demonstration repository, please cite it."
+title: "Genotype QC and Harmonization Utilities"
+authors:
+  - family-names: "Akbarzadeh"
+    given-names: "Mahdi"
+version: "0.1.0"
+date-released: "2026-06-10"
+repository-code: "https://github.com/akbarzadehms/genotype-qc-harmonization-utils"
+license: "MIT"

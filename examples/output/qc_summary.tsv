@@ -1,0 +1,10 @@
+metric	value	status	interpretation
+created_by	Mahdi Akbarzadeh	PASS	Creator attribution recorded.
+declared_genome_build	GRCh37	PASS	Genome build declaration used for reference compatibility checks.
+variant_count	12	PASS	Total number of synthetic variant rows processed.
+call_rate	0.9167	WARN	Synthetic sample-level call rate estimate.
+invalid_genotype_count	1	FAIL	Invalid genotype encodings should be reviewed.
+duplicate_marker_rows	2	WARN	Duplicate marker rows were flagged.
+non_autosomal_rows	1	WARN	Non-autosomal markers are flagged in this autosomal-focused demonstration.
+invalid_position_rows	1	FAIL	Positions must be positive integers.
+harmonization_pass_rate	0.5000	WARN	Proportion of rows compatible with the synthetic reference alleles.

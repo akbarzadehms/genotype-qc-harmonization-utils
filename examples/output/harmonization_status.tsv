@@ -1,0 +1,5 @@
+status_label	count	proportion	interpretation
+PASS	6	0.5000	Compatible with the synthetic reference table.
+WARN	5	0.4167	Reportable only with caution or additional review.
+FAIL	0	0.0000	Not harmonization-ready.
+SKIP	1	0.0833	Skipped because genotype was missing or not applicable.

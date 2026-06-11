@@ -1,0 +1,9 @@
+rsid	chromosome	position	effect_allele	other_allele	genome_build
+rs1001	1	10583	A	G	GRCh37
+rs1002	1	10611	T	C	GRCh37
+rs1003	2	20541	C	T	GRCh37
+rs1004	2	20999	A	G	GRCh37
+rs1005	3	30101	A	T	GRCh37
+rs1006	3	30202	C	G	GRCh37
+rs1010	6	60123	G	T	GRCh37
+rs1011	7	70123	A	C	GRCh37
